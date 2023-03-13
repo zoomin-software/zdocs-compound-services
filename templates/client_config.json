@@ -1,0 +1,5 @@
+{
+    "key": "api access key goes here",
+    "secret": "api secret goes here",
+    "domain": "your zoomin backend url comes here, e.g https://zd-template-be.zoominsoftware.io" 
+}
