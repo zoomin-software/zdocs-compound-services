@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Utility methods and CLI tool for Zoomin API
-When running from CLI use:
-    python zd-client.py https://api-host.com --access your_access_key --secret your_secret
-You can also use it as a library by calling  method `invoke_api`
 """
+
 import requests
 import hmac
 import hashlib
