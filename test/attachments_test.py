@@ -1,13 +1,19 @@
 import json
+import string
 import sys
 sys.path.insert(0, '../src')
 from attachment import Attachment
 
-#main
+#parameters: 
+#1) config file name
+#2) list of labels keys to filter the bundles form which the attachments shall be returned e.g "kb, dita"
+#3) output file name
+#E.g attachments_test.py kofax_config.json ['kb'] kofax_attachments.json
 if __name__ == "__main__":
     zdocs_attachment = Attachment(sys.argv[1])
-    all_attachments = zdocs_attachment.get_all_attachments()
-    with open('kofax_attachments.json', 'w') as f:
+    labelkeys = list(sys.argv[2].split(","))
+    all_attachments = zdocs_attachment.get_all_attachments(labelkeys)
+    with open(sys.argv[3], 'w') as f:
         data = {"name": "attachments"}
         json.dump(all_attachments, f)
 
