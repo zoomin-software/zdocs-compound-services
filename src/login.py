@@ -25,11 +25,10 @@ class ZdocsLogin:
         cls.base_url = base_url
         return super().__new__(cls)
 
-    def do_request(self, verb, url, params, body, filename):
+    def do_request(self, verb, url, params, body):
         """
         Performs the actual HTTP call
         """
-        form_data = None
         result = requests.request(
             verb.lower(),
             url,
@@ -37,7 +36,6 @@ class ZdocsLogin:
             headers={"Accept": "application/json",
                     "Content-Type": "application/json"},
             data=json.dumps(body),
-            # files=form_data
         )
         return result
     
@@ -55,7 +53,7 @@ class ZdocsLogin:
         digest_encoded = base64.urlsafe_b64encode(digest)
         return str(digest_encoded, encoding='utf8', errors='strict').rstrip('=')
     
-    def invoke_api(self, endpoint_url, verb='GET', body=None, filename=None):
+    def invoke_api(self, endpoint_url, verb='GET', body=None):
         """
         Performs Zoomin API call
         """
@@ -80,8 +78,8 @@ class ZdocsLogin:
         query.update({"signature": signature})
         # append access key
         query.update({"accessKey": self.api_access_key})
-        print(f"\n{url_query_less}?accessKey={self.api_access_key}&timestamp={timestamp}&signature={signature}")
-        return self.do_request(verb, url_query_less, query, body, filename)
+        #print(f"\n{url_query_less}?accessKey={self.api_access_key}&timestamp={timestamp}&signature={signature}")
+        return self.do_request(verb, url_query_less, query, body)
 
     def to_labelkeys_query_param(self, labelkeys:list):
         labelkeys.insert(0,'')

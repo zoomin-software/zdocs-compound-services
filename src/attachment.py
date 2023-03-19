@@ -22,11 +22,14 @@ class Attachment:
         #for each bundle get all topics
         for bundle in bundles:
             topics = self.bundle.get_bundle_topics(bundle['name'])
-
             #for each topic get topic attachments 
             for topic in topics:
                 attachments = self.topic.get_topic_attachments(bundle['name'],topic)
-                for attachment in attachments:
-                    if attachment:
-                        all_attachments.append(attachment)
+                if attachments:
+                    topic_attachments = {"topic_name": topic, "bundle": bundle['name'],
+                         "attachments": attachments}
+                    print(topic_attachments)
+                    # for attachment in attachments:
+                    #     if attachment:
+                    all_attachments.append(topic_attachments)
         return all_attachments

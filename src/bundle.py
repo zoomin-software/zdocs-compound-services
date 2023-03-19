@@ -9,6 +9,7 @@ class Bundle:
     def get_all_bundles(self, labelkeys: list):
         print (labelkeys)
         labelkeys_query_param = self.zdocs.to_labelkeys_query_param(labelkeys)
+        print (labelkeys_query_param)
         return json.loads(self.zdocs.invoke_api('/bundlelist?'+labelkeys_query_param, 'GET').content)['bundle_list']
   
     def get_bundle_topics(self,bundle):
