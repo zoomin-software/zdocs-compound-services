@@ -47,6 +47,6 @@ if __name__ == "__main__":
     bundle = Bundle(zdocs)
     existing_topics = bundle.topic_exists('z-kb-articles-salesforce1',pint_topics)
     #print(existing_topics["non_exisitng"])
-    
+     
 
 
