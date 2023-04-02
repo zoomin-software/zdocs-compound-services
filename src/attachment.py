@@ -14,10 +14,10 @@ class Attachment:
         cls.topic =  Topic(cls.zdocs)
         return super().__new__(cls)
 
-    def get_all_attachments(self):
+    def get_all_attachments(self, labelkeys):
         all_attachments = []
         #call bundlelist to get all bundles
-        bundles = self.bundle.get_all_bundles(['kb'])
+        bundles = self.bundle.get_all_bundles(labelkeys)
 
         #for each bundle get all topics
         for bundle in bundles:
