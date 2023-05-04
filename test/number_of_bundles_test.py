@@ -21,23 +21,8 @@ if __name__ == "__main__":
     base_url = config['domain']+'/api'
     zdocs = ZdocsLogin(base_url,config['key'],config['secret'])
 
-    filelist_path = sys.argv[2]
-    filelist_path_json = 'filelist'
-
-    with open(filelist_path) as xml_file:
-        data_dict = xmltodict.parse(xml_file.read())
-        json_data = json.dumps(data_dict)
-        with open(filelist_path_json, "w") as json_file:
-            json_file.write(json_data)
-        file = open(filelist_path_json, "r")
-        pint = json.load(file) 
-
-        pint_topics = []
-        for i in pint['files']['file']:
-            pint_topics.append(i['@relpath'])
-
     bundle = Bundle(zdocs)
-    existing_topics = bundle.topic_exists(sys.argv[3],pint_topics)
+    print(bundle.number_of_topics(sys.argv[2]))
      
 
 
