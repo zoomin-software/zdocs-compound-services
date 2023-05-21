@@ -8,16 +8,27 @@ class Bundle:
         return super().__new__(cls)
 
     def get_all_bundles(self, labelkeys: list):
-        print(labelkeys)
+        #print(labelkeys)
         labelkeys_query_param = self.zdocs.to_labelkeys_query_param(labelkeys)
-        print(labelkeys_query_param)
-        return json.loads(self.zdocs.invoke_api('/bundlelist?'+labelkeys_query_param, 'GET').content)['bundle_list']
-
+        #print(labelkeys_query_param)
+        page = 1 
+        bundle_list = []
+        while page>0:
+            response = json.loads(self.zdocs.invoke_api('/bundlelist?page='+str(page)+labelkeys_query_param, 'GET').content)
+            #print(response['pagination_data']['next_page'])
+            if response['pagination_data']['next_page']!=None:
+                for bundle in response['bundle_list']:
+                    bundle_list.append(bundle)
+                page = page + 1
+            else:
+                page = -1    
+        return bundle_list        
+            
     def get_bundle_topics(self, bundle):
         return json.loads(self.zdocs.invoke_api('/bundle/'+bundle+'/pages', 'GET').content)
 
     def topic_exists(self, bundle, topic_names):
-        print(len(topic_names))
+        #print(len(topic_names))
         existing_topics = set()
         nonexisting_topics = set()
         duplicate_topics = set()
@@ -32,12 +43,15 @@ class Bundle:
                 nonexisting_topics.add(topic)
         response = {"exiting": existing_topics,
                     "non_exisitng": nonexisting_topics, "duplicates": duplicate_topics}
-        print(response["duplicates"])
-        print(len(response["non_exisitng"]), response["non_exisitng"])
+        #(response["duplicates"])
+        #print(len(response["non_exisitng"]), response["non_exisitng"])
         return response
 
     def reindex_all_bundles(self):
-        bundles = self.get_all_bundles()
+        bundles = self.get_all_bundles([])
+        print(bundles[0])
         for bundle in bundles:
-            self.zdocs.invoke_api('/bundle/'+bundle.name+'/reindex')
+           print(bundle['name'])
+           response =  self.zdocs.invoke_api('https://axway-be-staging.zoominsoftware.io/bundle/'+bundle['name']+'/reindex','POST',[],True,False).status_code
+           print(response)
         return len(bundles)

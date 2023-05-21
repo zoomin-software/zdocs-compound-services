@@ -19,13 +19,14 @@ class ZdocsLogin:
     # methods
 	
 
-    def __new__(cls,base_url,api_access_key,api_secret):
+    def __new__(cls,base_url,api_access_key,api_secret,cookie=''):
         cls.api_access_key = api_access_key
         cls.api_secret = api_secret
         cls.base_url = base_url
+        cls.cookie = cookie
         return super().__new__(cls)
 
-    def do_request(self, verb, url, params, body):
+    def do_request(self, verb, url, params, body, cookie):
         """
         Performs the actual HTTP call
         """
@@ -34,9 +35,11 @@ class ZdocsLogin:
             url,
             params=params,
             headers={"Accept": "application/json",
-                    "Content-Type": "application/json"},
+                    "Content-Type": "application/json",
+                    "Cookie": cookie},      
             data=json.dumps(body),
         )
+        print (cookie)
         return result
     
     def generate_signature(self, original_string, secret):
@@ -53,11 +56,14 @@ class ZdocsLogin:
         digest_encoded = base64.urlsafe_b64encode(digest)
         return str(digest_encoded, encoding='utf8', errors='strict').rstrip('=')
     
-    def invoke_api(self, endpoint_url, verb='GET', body=None):
+    def invoke_api(self, endpoint_url, verb='GET', body=None, use_cookie=False, generate_endpoint_url=True):
         """
         Performs Zoomin API call
         """
-        url = self.base_url+endpoint_url
+        if (generate_endpoint_url):
+            url = self.base_url+endpoint_url
+        else:
+            url = endpoint_url    
         print (url)
         assert url, "'url' is required"
         assert self.api_access_key, "'api_access_key' is required"
@@ -79,14 +85,20 @@ class ZdocsLogin:
         # append access key
         query.update({"accessKey": self.api_access_key})
         #print(f"\n{url_query_less}?accessKey={self.api_access_key}&timestamp={timestamp}&signature={signature}")
-        return self.do_request(verb, url_query_less, query, body)
+        if (use_cookie):
+            cookie = self.cookie
+        else:
+            cookie=''    
+        return self.do_request(verb, url_query_less, query, body, cookie)
 
     def to_labelkeys_query_param(self, labelkeys:list):
-        labelkeys.insert(0,'')
-        labelkeys_query_param = ''
-        if labelkeys:
-            labelkeys_query_param = ('&labelkey='.join(labelkeys))[1:]
-            print (labelkeys_query_param) 
-        return labelkeys_query_param
-
+        if len(labelkeys)>0:
+            labelkeys.insert(0,'')
+            labelkeys_query_param = ''
+            if labelkeys:
+                labelkeys_query_param = ('&labelkey='.join(labelkeys))[1:]
+                #print (labelkeys_query_param) 
+            return labelkeys_query_param
+        else:
+            return '&labelkey='
 

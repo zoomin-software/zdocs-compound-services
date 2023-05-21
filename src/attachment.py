@@ -28,7 +28,7 @@ class Attachment:
                 if attachments:
                     topic_attachments = {"topic_name": topic, "bundle": bundle['name'],
                          "attachments": attachments}
-                    print(topic_attachments)
+                    #print(topic_attachments)
                     # for attachment in attachments:
                     #     if attachment:
                     all_attachments.append(topic_attachments)
