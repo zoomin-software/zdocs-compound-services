@@ -1,6 +1,9 @@
+import json
 import sys
-sys.path.insert(0, '../src')
 
+
+sys.path.insert(0, '../src')
+from login import ZdocsLogin
 from bundle import Bundle
 
 # parameters:
@@ -9,6 +12,10 @@ from bundle import Bundle
 # 3) output file name
 # E.g attachments_test.py acme_config.json ['kb'] acme_attachments.json
 if __name__ == "__main__":
+    config_file = open(sys.argv[1], "r")
+    config = json.load(config_file) 
+    base_url = config['domain']+'/api'
+    zdocs = ZdocsLogin(base_url,config['key'],config['secret'],config['cookie'])
 
-    zdocs_bundle = Bundle(sys.argv[0])
-    zdocs_bundle.reindex_all_bundles()
+    bundle = Bundle(zdocs)
+    bundle.reindex_all_bundles()
