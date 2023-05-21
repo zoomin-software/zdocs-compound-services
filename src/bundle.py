@@ -1,21 +1,22 @@
 import json
 from login import ZdocsLogin
 
+
 class Bundle:
-    def __new__(cls,zdocs: ZdocsLogin):
+    def __new__(cls, zdocs: ZdocsLogin):
         Bundle.zdocs = zdocs
         return super().__new__(cls)
 
     def get_all_bundles(self, labelkeys: list):
-        print (labelkeys)
+        print(labelkeys)
         labelkeys_query_param = self.zdocs.to_labelkeys_query_param(labelkeys)
-        print (labelkeys_query_param)
+        print(labelkeys_query_param)
         return json.loads(self.zdocs.invoke_api('/bundlelist?'+labelkeys_query_param, 'GET').content)['bundle_list']
-  
-    def get_bundle_topics(self,bundle):
+
+    def get_bundle_topics(self, bundle):
         return json.loads(self.zdocs.invoke_api('/bundle/'+bundle+'/pages', 'GET').content)
-    
-    def topic_exists(self,bundle, topic_names):
+
+    def topic_exists(self, bundle, topic_names):
         print(len(topic_names))
         existing_topics = set()
         nonexisting_topics = set()
@@ -27,10 +28,16 @@ class Bundle:
                     duplicate_topics.add(topic)
                 else:
                     existing_topics.add(topic)
-            else:        
-                nonexisting_topics.add(topic)    
-        response = {"exiting": existing_topics, "non_exisitng":nonexisting_topics, "duplicates":duplicate_topics} 
+            else:
+                nonexisting_topics.add(topic)
+        response = {"exiting": existing_topics,
+                    "non_exisitng": nonexisting_topics, "duplicates": duplicate_topics}
         print(response["duplicates"])
-        print(len(response["non_exisitng"]),response["non_exisitng"])
+        print(len(response["non_exisitng"]), response["non_exisitng"])
         return response
-           
+
+    def reindex_all_bundles(self):
+        bundles = self.get_all_bundles()
+        for bundle in bundles:
+            self.zdocs.invoke_api('/bundle/'+bundle.name+'/reindex')
+        return len(bundles)
