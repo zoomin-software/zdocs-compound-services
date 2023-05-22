@@ -11,14 +11,13 @@ class Bundle:
         #print(labelkeys)
         labelkeys_query_param = self.zdocs.to_labelkeys_query_param(labelkeys)
         #print(labelkeys_query_param)
-        page = 1 
+        page = 1      
         bundle_list = []
         while page>0:
             response = json.loads(self.zdocs.invoke_api('/bundlelist?page='+str(page)+labelkeys_query_param, 'GET').content)
-            #print(response['pagination_data']['next_page'])
+            for bundle in response['bundle_list']:
+                bundle_list.append(bundle)
             if response['pagination_data']['next_page']!=None:
-                for bundle in response['bundle_list']:
-                    bundle_list.append(bundle)
                 page = page + 1
             else:
                 page = -1    

@@ -18,8 +18,7 @@ if __name__ == "__main__":
      
     file = open(sys.argv[1], "r")
     config = json.load(file) 
-    base_url = config['domain']+'/api'
-    zdocs = ZdocsLogin(base_url,config['key'],config['secret'])
+    zdocs = ZdocsLogin(config['domain'],config['key'],config['secret'])
 
     with open(sys.argv[2]) as xml_file:
      

@@ -14,8 +14,7 @@ from bundle import Bundle
 if __name__ == "__main__":
     config_file = open(sys.argv[1], "r")
     config = json.load(config_file) 
-    base_url = config['domain']+'/api'
-    zdocs = ZdocsLogin(base_url,config['key'],config['secret'],config['cookie'])
+    zdocs = ZdocsLogin(config['domain'],config['key'],config['secret'])
 
     bundle = Bundle(zdocs)
     bundle.reindex_all_bundles()

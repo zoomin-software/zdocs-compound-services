@@ -23,6 +23,7 @@ class ZdocsLogin:
         cls.api_access_key = api_access_key
         cls.api_secret = api_secret
         cls.base_url = base_url
+        cls.api_url = base_url+'/api'
         cls.cookie = cookie
         return super().__new__(cls)
 
@@ -39,7 +40,7 @@ class ZdocsLogin:
                     "Cookie": cookie},      
             data=json.dumps(body),
         )
-        print (cookie)
+        #print (result)
         return result
     
     def generate_signature(self, original_string, secret):
@@ -61,10 +62,10 @@ class ZdocsLogin:
         Performs Zoomin API call
         """
         if (generate_endpoint_url):
-            url = self.base_url+endpoint_url
+            url = self.api_url+endpoint_url
         else:
             url = endpoint_url    
-        print (url)
+        #print (url)
         assert url, "'url' is required"
         assert self.api_access_key, "'api_access_key' is required"
         assert self.api_secret, "'api_secret' is required"
@@ -96,8 +97,8 @@ class ZdocsLogin:
             labelkeys.insert(0,'')
             labelkeys_query_param = ''
             if labelkeys:
-                labelkeys_query_param = ('&labelkey='.join(labelkeys))[1:]
-                #print (labelkeys_query_param) 
+                labelkeys_query_param = ('&labelkey='.join(labelkeys))
+                print (labelkeys_query_param) 
             return labelkeys_query_param
         else:
             return '&labelkey='
