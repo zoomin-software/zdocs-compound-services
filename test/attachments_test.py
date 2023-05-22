@@ -1,8 +1,10 @@
 import json
 import string
 import sys
+
 sys.path.insert(0, '../src')
 from attachment import Attachment
+from login import ZdocsLogin
 
 #parameters: 
 #1) config file name
@@ -10,8 +12,10 @@ from attachment import Attachment
 #3) output file name
 #E.g attachments_test.py acme_config.json ['kb'] acme_attachments.json 
 if __name__ == "__main__":
-    
-    zdocs_attachment = Attachment(sys.argv[1])
+    file = open(sys.argv[1], "r")
+    config = json.load(file) 
+    zdocs = ZdocsLogin(config['domain'],config['key'],config['secret'])
+    zdocs_attachment = Attachment(zdocs)
     labelkeys = list(sys.argv[2].split(","))
     all_attachments = zdocs_attachment.get_all_attachments(labelkeys)
     with open(sys.argv[3], 'w') as f:
