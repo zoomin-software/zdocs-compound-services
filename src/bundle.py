@@ -47,6 +47,13 @@ class Bundle:
         #(response["duplicates"])
         #print(len(response["non_exisitng"]), response["non_exisitng"])
         return response
+    
+    def number_of_topics(self,bundle): 
+        return len(self.get_bundle_topics(bundle))
+    
+    def delete_bundles(self,bundles):
+        for bundle in bundles:
+           json.loads(self.zdocs.invoke_api('/bundle/'+bundle, 'DELETE').content)
 
     def reindex_all_bundles(self):
         bundles = self.get_all_bundles([])

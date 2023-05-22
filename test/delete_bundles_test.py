@@ -18,8 +18,7 @@ if __name__ == "__main__":
      
     config_file = open(sys.argv[1], "r")
     config = json.load(config_file) 
-    base_url = config['domain']+'/api'
-    zdocs = ZdocsLogin(base_url,config['key'],config['secret'])
+    zdocs = ZdocsLogin(config['domain'],config['key'],config['secret'])
 
     bundles_file = open(sys.argv[2], "r")
     bundles_json = json.load(bundles_file) 
