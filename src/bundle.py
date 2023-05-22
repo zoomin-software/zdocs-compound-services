@@ -51,6 +51,6 @@ class Bundle:
         print(bundles[0])
         for bundle in bundles:
            print(bundle['name'])
-           response =  self.zdocs.invoke_api('https://axway-be-staging.zoominsoftware.io/bundle/'+bundle['name']+'/reindex','POST',[],True,False).status_code
+           response =  self.zdocs.invoke_api(self.zdocs.base_url+'/bundle/'+bundle['name']+'/reindex','POST',[],True,False).status_code
            print(response)
         return len(bundles)
