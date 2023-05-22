@@ -41,6 +41,7 @@ class ZdocsLogin:
             data=json.dumps(body),
         )
         #print (result)
+        print(result)
         return result
     
     def generate_signature(self, original_string, secret):

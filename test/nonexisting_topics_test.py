@@ -20,32 +20,23 @@ if __name__ == "__main__":
     config = json.load(file) 
     zdocs = ZdocsLogin(config['domain'],config['key'],config['secret'])
 
-    with open(sys.argv[2]) as xml_file:
-     
+    filelist_path = sys.argv[2]
+    filelist_path_json = 'filelist'
+
+    with open(filelist_path) as xml_file:
         data_dict = xmltodict.parse(xml_file.read())
-        #print(data_dict)
-        # xml_file.close()
-        
-        # generate the object using json.dumps()
-        # corresponding to json data
-        
         json_data = json.dumps(data_dict)
-        
-        #Write the json data to output
-        with open("data.json", "w") as json_file:
+        with open(filelist_path_json, "w") as json_file:
             json_file.write(json_data)
-       
-        file = open("data.json", "r")
+        file = open(filelist_path_json, "r")
         pint = json.load(file) 
+
         pint_topics = []
         for i in pint['files']['file']:
-            #print(i['@relpath'])
             pint_topics.append(i['@relpath'])
-        #print(pint)
 
     bundle = Bundle(zdocs)
-    existing_topics = bundle.topic_exists('z-kb-articles-salesforce1',pint_topics)
-    #print(existing_topics["non_exisitng"])
+    existing_topics = bundle.topic_exists(sys.argv[3],pint_topics)
      
 
 

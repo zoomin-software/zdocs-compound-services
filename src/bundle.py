@@ -26,8 +26,10 @@ class Bundle:
     def get_bundle_topics(self, bundle):
         return json.loads(self.zdocs.invoke_api('/bundle/'+bundle+'/pages', 'GET').content)
 
-    def topic_exists(self, bundle, topic_names):
-        #print(len(topic_names))
+    #there are cases where there a topic on PINT side that are not known by Zdocs, and full reindex won't solve it
+    #could happen because of unrecognized labels for examples
+    #this method returns these topics which are in "topics_names" but not in the bundle page 
+    def topic_exists(self,bundle, topic_names):
         existing_topics = set()
         nonexisting_topics = set()
         duplicate_topics = set()
