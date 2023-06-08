@@ -1,6 +1,9 @@
+from asyncio import sleep
+import datetime
 import json
 from login import ZdocsLogin
-
+from bs4 import BeautifulSoup
+from datetime import datetime
 
 class Bundle:
     def __new__(cls, zdocs: ZdocsLogin):
@@ -21,7 +24,20 @@ class Bundle:
                 page = page + 1
             else:
                 page = -1    
-        return bundle_list        
+        return bundle_list  
+
+    def get_all_bundles_admin(self):
+        response = self.zdocs.invoke_api(self.zdocs.base_url+'/admin/managebundles?rpp=50','GET',{},False,False)
+        soup = BeautifulSoup(response.content)
+        a_tags = soup.find_all('a', {'class': 'dropdown-item post pointer link-download'})
+        bundle_list = []
+        for a_tag in a_tags:
+            bundle_url=a_tag.get('url')
+            i = bundle_url.index('/bundle/')
+            bundle_name = bundle_url[i+len('/bundle/'):][:-len('/reindex')]
+            bundle_list.append(bundle_name)
+        return bundle_list
+           
             
     def get_bundle_topics(self, bundle):
         return json.loads(self.zdocs.invoke_api('/bundle/'+bundle+'/pages', 'GET').content)
@@ -55,11 +71,46 @@ class Bundle:
         for bundle in bundles:
            json.loads(self.zdocs.invoke_api('/bundle/'+bundle, 'DELETE').content)
 
-    def reindex_all_bundles(self):
-        bundles = self.get_all_bundles([])
-        print(bundles[0])
-        for bundle in bundles:
-           print(bundle['name'])
-           response =  self.zdocs.invoke_api(self.zdocs.base_url+'/bundle/'+bundle['name']+'/reindex','POST',[],True,False).status_code
-           print(response)
-        return len(bundles)
+    def reindex_all_bundles(self,do_not_reindex_already_indexed_bundles=True):
+        already_indexed_bundles = self.get_all_bundles([])
+        bundles_to_be_indexed = self.get_all_bundles_admin()
+        counter = 0
+        wait_for_empty_queue_after_x_bundles = 2
+        sleep_time_between_empty_queue_checks = 60
+        bundles_indexed = []
+        for bundle in bundles_to_be_indexed:
+            print(bundle)
+            if counter==wait_for_empty_queue_after_x_bundles:
+                while not(self.indexing_queue_empty()):
+                    sleep(sleep_time_between_empty_queue_checks) 
+                    time = time.localtime()
+                    current_time = time.strftime("%H:%M:%S", t)
+                    print(current_time+' waiting for indexing queue to clear..')
+                counter=0 
+            else:         
+                counter+=1 
+            reindexing_required = True    
+            if do_not_reindex_already_indexed_bundles:    
+                reindexing_required = not(self.bundle_already_indexed(already_indexed_bundles, bundle)) 
+            if reindexing_required:  
+                response =  self.zdocs.invoke_api(self.zdocs.base_url+'/bundle/'+bundle+'/reindex','POST',[],True,False).status_code     
+                print(response)
+                bundles_indexed.append(bundle)                                  
+        return bundles_indexed
+
+    def indexing_queue_empty(self):
+         response =  json.loads(self.zdocs.invoke_api('/admin/reindex/status','GET').content)
+         print (response['queue'])
+         return len(response['queue'])==0
+    
+    def bundle_already_indexed(self,bundle_list:list, bundle_name):
+        print (bundle_name)
+        for bundle in bundle_list:
+            print(bundle['name'])
+            if bundle['name'] == bundle_name:
+                print('bundle '+bundle_name+ ' is already indexed')
+                return True
+        return False
+        
+
+

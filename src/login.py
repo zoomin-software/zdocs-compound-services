@@ -41,7 +41,7 @@ class ZdocsLogin:
             data=json.dumps(body),
         )
         #print (result)
-        print(result)
+        #print(result)
         return result
     
     def generate_signature(self, original_string, secret):
@@ -66,7 +66,7 @@ class ZdocsLogin:
             url = self.api_url+endpoint_url
         else:
             url = endpoint_url    
-        #print (url)
+        print (url)
         assert url, "'url' is required"
         assert self.api_access_key, "'api_access_key' is required"
         assert self.api_secret, "'api_secret' is required"
