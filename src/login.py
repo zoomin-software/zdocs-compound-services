@@ -66,7 +66,7 @@ class ZdocsLogin:
             url = self.api_url+endpoint_url
         else:
             url = endpoint_url    
-        print (url)
+        #print (url)
         assert url, "'url' is required"
         assert self.api_access_key, "'api_access_key' is required"
         assert self.api_secret, "'api_secret' is required"
