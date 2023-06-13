@@ -27,7 +27,7 @@ class Bundle:
         return bundle_list  
 
     def get_all_bundles_admin(self):
-        response = self.zdocs.invoke_api(self.zdocs.base_url+'/admin/managebundles?rpp=50','GET',{},False,False)
+        response = self.zdocs.invoke_api(self.zdocs.base_url+'/admin/managebundles?rpp=10000','GET',{},False,False)
         soup = BeautifulSoup(response.content)
         a_tags = soup.find_all('a', {'class': 'dropdown-item post pointer link-download'})
         bundle_list = []
